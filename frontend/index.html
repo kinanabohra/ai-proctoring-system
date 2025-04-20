@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureExam Pro | AI Proctoring System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --danger: #ef233c;
+      --danger-dark: #d90429;
+      --success: #4cc9f0;
+      --success-dark: #4895ef;
+      --warning: #f8961e;
+      --dark: #2b2d42;
+      --light: #f8f9fa;
+      --gray: #adb5bd;
+      --border-radius: 12px;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #f1f5f9;
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background-color: white;
+      box-shadow: var(--shadow);
+      padding: 15px 0;
+      margin-bottom: 30px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .logo-icon {
+      font-size: 1.8rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+      color: var(--dark);
+    }
+
+    .subtitle {
+      color: var(--gray);
+      margin-bottom: 30px;
+      font-size: 1rem;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 30px;
+    }
+
+    .main-content {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 25px;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+
+    video, canvas {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      display: block;
+      background-color: #e9ecef;
+      border-radius: var(--border-radius);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--gray);
+    }
+
+    .status-dot.active {
+      background-color: var(--success);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--border-radius);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger-dark);
+      transform: translateY(-2px);
+    }
+
+    .disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .timer-container {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .timer-icon {
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .timer {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: var(--dark);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title i {
+      color: var(--primary);
+    }
+
+    .snapshots-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .snapshot {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid var(--danger);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .snapshot:hover {
+      transform: scale(1.05);
+    }
+
+    .alert-log {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .alert-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-item:last-child {
+      border-bottom: none;
+    }
+
+    .alert-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .alert-icon.warning {
+      background-color: rgba(248, 150, 30, 0.2);
+      color: var(--warning);
+    }
+
+    .alert-icon.danger {
+      background-color: rgba(239, 35, 60, 0.2);
+      color: var(--danger);
+    }
+
+    .alert-time {
+      font-size: 0.8rem;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    /* Modal for instructions */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal {
+      background-color: white;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 500px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      animation: modalFadeIn 0.3s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray);
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      color: var(--danger);
+    }
+
+    .modal-body {
+      margin-bottom: 25px;
+    }
+
+    .rules-list {
+      list-style: none;
+    }
+
+    .rules-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .rules-list li:last-child {
+      border-bottom: none;
+    }
+
+    .rule-icon {
+      color: var(--primary);
+      font-size: 1.2rem;
+      margin-top: 2px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+      
+      .controls {
+        flex-direction: column;
+      }
+      
+      .snapshots-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Instruction Modal -->
+  <div id="instructionModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          <span class="material-icons">assignment</span>
+          Exam Guidelines
+        </h2>
+        <button class="modal-close" onclick="closeInstructions()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Please read these instructions carefully before starting your exam:</p>
+        <ul class="rules-list">
+          <li>
+            <span class="material-icons rule-icon">person</span>
+            <div>You must be alone in a quiet, well-lit room with no distractions</div>
+          </li>
+          <li>
+            <span class="material-icons rule-icon">videocam</span>
+            <div>Keep your face clearly visible to the webcam at all times</div>
+          </li>
+          <li>
+            <span class="material-icons rule-icon">devices</span>
+            <div>No secondary devices, phones, or external help allowed</div>
+          </li>
+          <li>
+            <span class="material-icons rule-icon">visibility_off</span>
+            <div>Looking away from screen for extended periods may flag suspicious activity</div>
+          </li>
+          <li>
+            <span class="material-icons rule-icon">warning</span>
+            <div>Multiple faces detected will automatically terminate the exam</div>
+          </li>
+        </ul>
+      </div>
+      <button class="btn btn-primary" onclick="closeInstructions()" style="width: 100%;">
+        <span class="material-icons">check_circle</span>
+        I Understand & Agree
+      </button>
+    </div>
+  </div>
+
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <span class="material-icons logo-icon">verified_user</span>
+        <span>SecureExam Environment</span>
+      </div>
+      <div class="user-info">
+        <span>Kinana Bohra</span>
+        <div class="user-avatar">KB</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>AI Proctored Exam</h1>
+    <p class="subtitle">Your session is being monitored</p>
+
+    <div class="dashboard">
+      <div class="main-content">
+        <div class="video-container">
+          <video id="inputVideo" autoplay muted></video>
+          <canvas id="outputCanvas" style="display: none;"></canvas>
+        </div>
+
+        <div class="status-indicator">
+          <div id="statusDot" class="status-dot"></div>
+          <span id="statusText">Initializing proctoring system...</span>
+        </div>
+
+        <div class="controls">
+          <button id="startBtn" class="btn btn-primary" onclick="startTest()">
+            <span class="material-icons">play_arrow</span>
+            Start Exam
+          </button>
+          <button id="endBtn" class="btn btn-danger disabled" onclick="endTest()">
+            <span class="material-icons">stop</span>
+            End Exam
+          </button>
+        </div>
+
+        <div class="timer-container">
+          <span class="material-icons timer-icon">timer</span>
+          <div>Time Remaining: <span id="timer" class="timer">00:10:00</span></div>
+        </div>
+
+        <h3 class="card-title">
+          <span class="material-icons">photo_camera</span>
+          Suspicious Activity
+        </h3>
+        <div id="snapshots" class="snapshots-grid">
+          <!-- Snapshots will appear here -->
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="card">
+          <h3 class="card-title">
+            <span class="material-icons">warning</span>
+            Activity Monitoring
+          </h3>
+          <div id="alertLog" class="alert-log">
+            <!-- Alerts will appear here -->
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">
+            <span class="material-icons">info</span>
+            Exam Information
+          </h3>
+          <p><strong>Exam:</strong>Placement Technical Round</p>
+          <p><strong>Duration:</strong> 10 minutes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Icons from Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+  
+  <!-- Main Script -->
+  <script src="script.js"></script>
+</body>
+</html>
